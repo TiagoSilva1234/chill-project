@@ -1,21 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import {useNavigate} from "react-router-dom";
 import Axios from 'axios';
 import './login.scss';
 import {useForm} from 'react-hook-form';
+import UserContext  from '../../components/Context/Context.js'
 const Login = () => {
-  const [name, setName] = useState();
-  const [pass, setPass] = useState();
 
-const login = {
-  name: name,
-  pass: pass
-}
+  const[stat,setStat] = useState();
+
   const {register, handleSubmit} = useForm();
+
+  const {logged, setLogged} = useContext(UserContext)
  const onSubmit = (data) =>{
-   setName(data.name);
-   setPass(data.pass);
-   
+  Axios.get(`http://localhost:3001/login/${data.name}/${data.pass}`, data).then(res => {
+    console.log(res.data);
+    if(res.data.status === 200){
+      setLogged(true)
+      navigate("/")
+    
+    }
+    setStat("you dumb ")
+});
+
  };
  const navigate = useNavigate();
 
@@ -30,34 +36,8 @@ const login = {
       console.log(res.data.message);
     });
   }, [])
-
-/*    
-   function handleclick(){
-       const idk =  {
-         name: name,
-         email: email,
-         pass: pass
-     }
-       Axios.post('http://localhost:3001/create',idk).then(res=>console.log(res.data))
-       .then(res => {
-         console.log(res);
-       });
-      }
-      */
-      
-   
      
-   
-  function handleLogin() {
-
-    Axios.get(`http://localhost:3001/login/${login.name}/${login.pass}`, login).then(res => {
-      console.log(res.data);
-      if(res.data.status === 200){
-        navigate("/")
-      }
-  });
-
-  }
+ 
 
   return (
     <div className="container">
@@ -67,14 +47,15 @@ const login = {
         <h1>Login</h1>
         <form  onSubmit={handleSubmit(onSubmit)}className="loginSection">
           <p>Name:</p>
-          <input {...register("name")} onChange={(e) => setName(e.target.value)} type="text" />
+          <input {...register("name")}  type="text" />
           <br/>
           <p>Pass:</p>
-          <input {...register("pass")} onChange={(e) => setPass(e.target.value)} type="text" />
+          <input {...register("pass")}  type="text" />
       
        
-        <button type="submit" onClick={() => handleLogin()}>login</button>
+        <button type="submit">login</button>
         </form>
+        <p>{stat}</p>
       </div>
     </div>);
 

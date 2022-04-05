@@ -18,18 +18,42 @@ app.listen(PORT, () => {
   console.log(`listening on Port${PORT}`);
 });
 
+////////////////////
+////////////////////
+
 app.get("/", (req: any, res: any) => {
   res.send({ message: "We did it!", claudio: "gyo" });
 });
 
-app.post("/create", (req: any, res: any) => {
-  console.log(req.body);
-  if (req.body !== undefined) {
-    createUser(req.body.name, req.body.email, req.body.pass);
-    res.send(HTTPresponse(200, "good"));
-    return;
-  }
-  res.send(HTTPresponse(400, "bad"));
+
+
+
+////////////////////
+////////////////////
+
+
+app.post("/create", async(req: any, res: any) => {
+console.log(req.body.name,req.body.email,req.body.pass);
+
+ if((await checkEmail(req.body.email)).length !== 0){
+   res.send(HTTPresponse(400,"email already exists"))
+   return;
+ }
+
+ if((await checkName(req.body.name)).length !== 0){
+  res.send(HTTPresponse(400,"name already exists"))
+  return;
+}
+
+if( typeof req.body.name === null
+   || typeof req.body.email === null
+    || typeof req.body.email === null){
+  res.send(HTTPresponse(400,"bad format"))
+  return;
+}
+
+createUser(req.body.name,req.body.email,req.body.pass)
+res.send(HTTPresponse(200,"good"))
 });
 
 
@@ -37,18 +61,21 @@ app.get("/all", (req: any, res: any) => {
   res.send(base_de_dados);
 });
 
+
+
+////////////////////
+////////////////////
+
 app.get("/login/:name/:pass/", (req: Request, res: Response) => {
 
-  console.log(req.params.name + req.params.pass);
   const users = prisma.user.findMany({
    where:{
-       email: req.params.email,
+       name: req.params.name,
        pass : req.params.pass
   }
-  }).then((obj)=>{
+  }).then((obj)=>{ 
     if(obj.length !== 0){
       res.send(HTTPresponse(200, "good"))
-     
       return;
     }
     res.send(HTTPresponse(400, "bad"))
@@ -59,9 +86,33 @@ app.get("/login/:name/:pass/", (req: Request, res: Response) => {
 
 
 
+ ////////////////////
+ ////////////////////
+ ////////////////////
+
+ function checkEmail(emailU:string ){
+  const users =  prisma.user.findMany({
+    where:{
+        email: emailU
+  
+   }}).then((obj)=>{
+ return obj
+ });
+   
+ return users;
+}
 
 
-
+async function checkName(name : string){
+  const users = prisma.user.findMany({
+    where:{
+        name:name
+   }
+   }).then((obj)=>{     
+  return obj
+  });
+  return users;
+}
 
 function HTTPresponse(status: number, result: string) {
   return {
