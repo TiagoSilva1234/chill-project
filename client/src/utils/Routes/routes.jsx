@@ -8,7 +8,7 @@ import Register from '../../components/Register'
 import Gallery from '../../components/Gallery'
 import Contact from '../../components/Contact'
 import About from '../../components/About'
-import {UserProvider } from '../../components/Context/Context.js'
+import {UserProvider } from '../Context/Context.js'
 
 
 export const RoutesApp = ()=>{

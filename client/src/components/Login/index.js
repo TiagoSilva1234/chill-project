@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import Axios from 'axios';
 import './login.scss';
 import {useForm} from 'react-hook-form';
-import UserContext  from '../../components/Context/Context.js'
+import UserContext  from '../../utils/Context/Context.js'
 const Login = () => {
 
   const[stat,setStat] = useState();

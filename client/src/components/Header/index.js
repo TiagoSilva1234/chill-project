@@ -1,7 +1,7 @@
 import React,{useContext} from "react";
 import './header.scss'
 import { Link } from 'react-router-dom'
-import UserContext  from '../../components/Context/Context.js'
+import UserContext  from '../../utils/Context/Context.js'
 const Header = () => {
 
     const poxa = ['Home', 'Gallery','About','Contact']
@@ -18,7 +18,7 @@ const Header = () => {
             ?
             <Link key={e+i} className="navLinks" to="/Register">{e} </Link> 
             :
-            <Link key={e+i} className="navLinks" to="/Register">{e}</Link>)}
+            <Link key={e+i} className="navLinks" to="/">{e}</Link>)}
             </div>
             <div className="secondSection">
             
