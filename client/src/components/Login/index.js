@@ -12,12 +12,11 @@ const Login = () => {
 
   const {logged, setLogged} = useContext(UserContext)
  const onSubmit = (data) =>{
-  Axios.get(`http://localhost:3001/login/${data.name}/${data.pass}`, data).then(res => {
+  Axios.get(`http://localhost:3001/login/${data.name}/${data.pass}`,{withCredentials: true}).then(res => {
     console.log(res.data);
     if(res.data.status === 200){
       setLogged(true)
       navigate("/")
-    
     }
     setStat("you dumb ")
 });

@@ -4,25 +4,39 @@ const cors = require("cors");
 import { PrismaClient } from "@prisma/client";
 import express,{Request,Response} from "express";
 const prisma = new PrismaClient();
-
+const cookieParser = require('cookie-parser')
 
 
 
 const PORT = 3001;
-app.use(cors());
+app.use(cors({
+  origin: true,
+  credentials: true
+}
+));
 app.use(express.json());
+app.use(cookieParser())
+
+
+
+app.use(function (req:Request,res: Response,next : any)  {
+  res.header('Access-Control-Allow-Origin: *');
+  res.header('Access-Control-Allow-Credentials: true');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  next();
+})
 
 const base_de_dados: string[] = [];
 
-app.listen(PORT, () => {
+app.listen(PORT, (req : Request, res : Response) => {
   console.log(`listening on Port${PORT}`);
 });
 
 ////////////////////
 ////////////////////
 
-app.get("/", (req: any, res: any) => {
-  res.send({ message: "We did it!", claudio: "gyo" });
+app.get("/", (req: any, res: any,next : any) => {
+
 });
 
 
@@ -32,8 +46,9 @@ app.get("/", (req: any, res: any) => {
 ////////////////////
 
 
-app.post("/create", async(req: any, res: any) => {
+app.post("/create", async(req: any, res: any,next: any) => {
 console.log(req.body.name,req.body.email,req.body.pass);
+ 
 
  if((await checkEmail(req.body.email)).length !== 0){
    res.send(HTTPresponse(400,"email already exists"))
@@ -53,6 +68,7 @@ if( typeof req.body.name === null
 }
 
 createUser(req.body.name,req.body.email,req.body.pass)
+res.cookie("claudio","idk")
 res.send(HTTPresponse(200,"good"))
 });
 
@@ -66,7 +82,9 @@ app.get("/all", (req: any, res: any) => {
 ////////////////////
 ////////////////////
 
-app.get("/login/:name/:pass/", (req: Request, res: Response) => {
+app.get("/login/:name/:pass/",  (req: Request, res: Response) => {
+
+
 
   const users = prisma.user.findMany({
    where:{
@@ -75,6 +93,9 @@ app.get("/login/:name/:pass/", (req: Request, res: Response) => {
   }
   }).then((obj)=>{ 
     if(obj.length !== 0){
+
+ res.cookie("claudio","idk")
+
       res.send(HTTPresponse(200, "good"))
       return;
     }
